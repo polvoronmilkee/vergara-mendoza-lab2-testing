@@ -1,20 +1,36 @@
-const path = require('path')
-const writeFile = require(path.join(process.cwd(), './helpers/writeFile'))
+const path = require("path");
+const { loadUserTasks, saveUserTasks } = require(
+  path.join(process.cwd(), "./helpers/userTasks"),
+);
 
-function handlePutTasks (req, res) {
-  const idsArray = req.params.ids.split(',')
+function handlePutTasks(req, res) {
+  if (!req.session.login) {
+    return res.status(401).send("unauthorized");
+  }
 
-  for (let i = 0; i < idsArray.length; i++) {
-    for (let j = 0; j < req.session.tasks.length; j++) {
-      if (idsArray[i] === req.session.tasks[j].ID) {
-        req.session.completed.push(req.session.tasks[j])
-        req.session.tasks.splice(j, 1)
+  const idsArray = req.params.ids.split(",");
+
+  loadUserTasks(req.session.login.email, (err, data) => {
+    if (err) throw err;
+    for (let i = 0; i < idsArray.length; i++) {
+      for (let j = 0; j < data.tasks.length; j++) {
+        if (idsArray[i] === data.tasks[j].ID) {
+          data.completed.push(data.tasks[j]);
+          data.tasks.splice(j, 1);
+        }
       }
     }
-  }
-  writeFile(req)
 
-  res.status(200).send('checkboxed task to done succesful')
+    saveUserTasks(
+      req.session.login.email,
+      data.tasks,
+      data.completed,
+      (saveErr) => {
+        if (saveErr) throw saveErr;
+        return res.status(200).send("checkboxed task to done succesful");
+      },
+    );
+  });
 }
 
-module.exports = handlePutTasks
+module.exports = handlePutTasks;

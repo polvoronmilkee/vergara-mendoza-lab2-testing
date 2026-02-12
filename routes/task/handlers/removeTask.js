@@ -1,20 +1,48 @@
-const path = require('path')
-const writeFile = require(path.join(process.cwd(), './helpers/writeFile'))
+const path = require("path");
+const { loadUserTasks, saveUserTasks } = require(
+  path.join(process.cwd(), "./helpers/userTasks"),
+);
 
-function removeTask (req, res) {
-  const id = req.params.id
-  req.session.tasks = req.session.tasks.filter(task => task.ID !== id)
-  writeFile(req)
+function removeTask(req, res) {
+  if (!req.session.login) {
+    return res.status(401).send("unauthorized");
+  }
 
-  res.status(200).send('delete task succesful')
+  const id = req.params.id;
+  loadUserTasks(req.session.login.email, (err, data) => {
+    if (err) throw err;
+    data.tasks = data.tasks.filter((task) => task.ID !== id);
+    saveUserTasks(
+      req.session.login.email,
+      data.tasks,
+      data.completed,
+      (saveErr) => {
+        if (saveErr) throw saveErr;
+        return res.status(200).send("delete task succesful");
+      },
+    );
+  });
 }
 
-function removeTaskCompleted (req, res) {
-  const id = req.params.id
-  req.session.completed = req.session.completed.filter(task => task.ID !== id)
-  writeFile(req)
+function removeTaskCompleted(req, res) {
+  if (!req.session.login) {
+    return res.status(401).send("unauthorized");
+  }
 
-  res.status(200).send('delete done task succesful')
+  const id = req.params.id;
+  loadUserTasks(req.session.login.email, (err, data) => {
+    if (err) throw err;
+    data.completed = data.completed.filter((task) => task.ID !== id);
+    saveUserTasks(
+      req.session.login.email,
+      data.tasks,
+      data.completed,
+      (saveErr) => {
+        if (saveErr) throw saveErr;
+        return res.status(200).send("delete done task succesful");
+      },
+    );
+  });
 }
 
-module.exports = {removeTask, removeTaskCompleted}
+module.exports = { removeTask, removeTaskCompleted };
