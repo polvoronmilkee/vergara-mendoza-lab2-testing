@@ -13,10 +13,10 @@ block content
             p.date= task.time
             button.done(value=task.ID) Done
             button.remove(value=task.ID) Remove
-            div.checkbox
-              label
-                input.checkbox(type="checkbox",value=task.ID) 
-                | Check!
+            //- div.checkbox
+            //-   label
+            //-     input.checkbox(type="checkbox",value=task.ID) 
+            //-     | Check!
         button.removeAll Mark As Done
         a(href='/completed/') 
          button.completed Go to Completed

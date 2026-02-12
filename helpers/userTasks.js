@@ -1,5 +1,46 @@
 const fs = require("fs");
 
+function parseFirstJsonObject(raw) {
+  if (!raw) {
+    return null;
+  }
+  let depth = 0;
+  let inString = false;
+  let escapeNext = false;
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+    if (escapeNext) {
+      escapeNext = false;
+      continue;
+    }
+    if (ch === "\\") {
+      escapeNext = true;
+      continue;
+    }
+    if (ch === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (inString) {
+      continue;
+    }
+    if (ch === "{") {
+      depth += 1;
+    } else if (ch === "}") {
+      depth -= 1;
+      if (depth === 0) {
+        const candidate = raw.slice(0, i + 1);
+        try {
+          return JSON.parse(candidate);
+        } catch (err) {
+          return null;
+        }
+      }
+    }
+  }
+  return null;
+}
+
 function loadUserTasks(email, callback) {
   const dataFileName = `./data-db/users_tasks/${email}.json`;
   fs.readFile(dataFileName, "utf-8", (err, data) => {
@@ -16,7 +57,19 @@ function loadUserTasks(email, callback) {
       const completed = Array.isArray(parsed.completed) ? parsed.completed : [];
       return callback(null, { tasks, completed });
     } catch (parseErr) {
-      return callback(parseErr);
+      const salvaged = parseFirstJsonObject(data);
+      if (!salvaged) {
+        return callback(parseErr);
+      }
+      const tasks = Array.isArray(salvaged.tasks) ? salvaged.tasks : [];
+      const completed = Array.isArray(salvaged.completed) ? salvaged.completed : [];
+      const payload = { tasks, completed };
+      fs.writeFile(
+        dataFileName,
+        JSON.stringify(payload),
+        { encoding: "utf-8" },
+        () => callback(null, payload),
+      );
     }
   });
 }
