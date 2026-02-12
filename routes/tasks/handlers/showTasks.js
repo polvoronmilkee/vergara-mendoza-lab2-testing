@@ -1,17 +1,20 @@
 const path = require("path");
-const { loadUserTasks } = require(
-  path.join(process.cwd(), "./helpers/userTasks"),
+const { getUserTasks } = require(
+  path.join(process.cwd(), "./helpers/dbQueries"),
 );
 
-function showTasks(req, res) {
+async function showTasks(req, res) {
   if (!req.session.login) {
     return res.redirect("/error/");
   }
 
-  loadUserTasks(req.session.login.email, (err, data) => {
-    if (err) throw err;
-    return res.render("pages/tasks", { tasks: data.tasks });
-  });
+  try {
+    const tasks = await getUserTasks(req.session.login.userId);
+    return res.render("pages/tasks", { tasks });
+  } catch (err) {
+    console.error("Error loading tasks:", err);
+    return res.redirect("/error/");
+  }
 }
 
 module.exports = showTasks;

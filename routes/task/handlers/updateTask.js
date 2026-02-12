@@ -1,33 +1,22 @@
 const path = require("path");
-const { loadUserTasks, saveUserTasks } = require(
-  path.join(process.cwd(), "./helpers/userTasks"),
+const { completeTask } = require(
+  path.join(process.cwd(), "./helpers/dbQueries"),
 );
 
-function updateTask(req, res) {
+async function updateTask(req, res) {
   if (!req.session.login) {
     return res.status(401).send("unauthorized");
   }
 
   const id = req.params.id;
-  loadUserTasks(req.session.login.email, (err, data) => {
-    if (err) throw err;
-    for (let i = 0; i < data.tasks.length; i++) {
-      if (data.tasks[i].ID === id) {
-        data.completed.push(data.tasks[i]);
-        data.tasks.splice(i, 1);
-        break;
-      }
-    }
-    saveUserTasks(
-      req.session.login.email,
-      data.tasks,
-      data.completed,
-      (saveErr) => {
-        if (saveErr) throw saveErr;
-        return res.status(200).send("change to done succesful");
-      },
-    );
-  });
+
+  try {
+    await completeTask(req.session.login.userId, id);
+    return res.status(200).send("change to done succesful");
+  } catch (err) {
+    console.error("Error updating task:", err);
+    return res.status(500).send("error updating task");
+  }
 }
 
 module.exports = updateTask;

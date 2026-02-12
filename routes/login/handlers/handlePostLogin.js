@@ -1,36 +1,49 @@
-const fs = require("fs");
 const path = require("path");
 const strftime = require("strftime");
 const crypto = require(path.join(process.cwd(), "./helpers/crypto"));
+const { findUserByEmail } = require(
+  path.join(process.cwd(), "./helpers/dbQueries"),
+);
 const decrypt = crypto.decrypt;
 
-function handlePostLogin(req, res) {
+async function handlePostLogin(req, res) {
   const { email, password } = req.body;
-  let autentification = false;
 
-  fs.readFile("./data-db/users_txt.txt", "utf-8", (err, data) => {
-    if (err) throw err;
-    const usersArrEncrypted = data.split("\r\n"); // (/\r?\n/)
-    const usersArrDecrypted = usersArrEncrypted
-      .filter((line) => line.trim() !== "")
-      .map((aAuthLine) => decrypt(aAuthLine))
-      .filter((user) => typeof user === "string" && user.length > 0);
+  try {
+    const user = await findUserByEmail(email);
 
-    usersArrDecrypted.forEach((user) => {
-      const [emailDB, passDB] = user.split(":");
-      if (emailDB === email && passDB === password) {
-        autentification = true;
-        req.session.login = { email };
-        console.log("------------ new login --------------");
-        console.log("user: " + email);
-        console.log("pass: " + password);
-        console.log("logged at: " + strftime("%F:%T", new Date()));
-        console.log("-------------------------------------");
-      }
+    if (!user) {
+      return res.redirect("/error");
+    }
+
+    // Decrypt stored password
+    const encryptedPayload = JSON.stringify({
+      encryptedData: user.password_encrypted,
+      iv: user.iv,
     });
-    if (autentification) res.redirect("/tasks/");
-    else res.redirect("/error");
-  });
+    const decrypted = decrypt(encryptedPayload);
+
+    if (!decrypted) {
+      return res.redirect("/error");
+    }
+
+    const [emailDB, passDB] = decrypted.split(":");
+
+    if (emailDB === email && passDB === password) {
+      req.session.login = { email, userId: user.id };
+      console.log("------------ new login --------------");
+      console.log("user: " + email);
+      console.log("pass: " + password);
+      console.log("logged at: " + strftime("%F:%T", new Date()));
+      console.log("-------------------------------------");
+      return res.redirect("/tasks/");
+    } else {
+      return res.redirect("/error");
+    }
+  } catch (err) {
+    console.error("Login error:", err);
+    return res.redirect("/error");
+  }
 }
 
 module.exports = handlePostLogin;

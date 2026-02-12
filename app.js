@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -34,6 +35,14 @@ app.set("view engine", "pug");
 app.locals.pretty = true;
 
 app.use(routes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+  res.status(500).render("pages/unauthorized", {
+    error: "An error occurred. Please try again.",
+  });
+});
 
 app.listen(PORT);
 console.log(`Listening on PORT ${PORT}...`);

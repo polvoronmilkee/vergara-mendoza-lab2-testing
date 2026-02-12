@@ -1,10 +1,8 @@
 const strftime = require("strftime");
 const path = require("path");
-const { loadUserTasks, saveUserTasks } = require(
-  path.join(process.cwd(), "./helpers/userTasks"),
-);
+const { createTask } = require(path.join(process.cwd(), "./helpers/dbQueries"));
 
-function handlePostTasks(req, res) {
+async function handlePostTasks(req, res) {
   if (!req.session.login) {
     return res.redirect("/error/");
   }
@@ -12,25 +10,20 @@ function handlePostTasks(req, res) {
   const taskName = req.body.task;
   const date = strftime("%B %d, %Y %H:%M", new Date());
   const createId = () => "_" + Math.random().toString(36).substr(2, 9);
-  const newTask = {
-    name: `${taskName}`,
-    time: `(Created at: ${date})`,
-    ID: createId(),
-  };
+  const taskId = createId();
 
-  loadUserTasks(req.session.login.email, (err, data) => {
-    if (err) throw err;
-    data.tasks.push(newTask);
-    saveUserTasks(
-      req.session.login.email,
-      data.tasks,
-      data.completed,
-      (saveErr) => {
-        if (saveErr) throw saveErr;
-        return res.redirect("/tasks/");
-      },
+  try {
+    await createTask(
+      req.session.login.userId,
+      taskName,
+      `(Created at: ${date})`,
+      taskId,
     );
-  });
+    return res.redirect("/tasks/");
+  } catch (err) {
+    console.error("Error creating task:", err);
+    return res.redirect("/tasks/");
+  }
 }
 
 module.exports = handlePostTasks;

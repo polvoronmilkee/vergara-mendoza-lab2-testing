@@ -1,17 +1,20 @@
 const path = require("path");
-const { loadUserTasks } = require(
-  path.join(process.cwd(), "./helpers/userTasks"),
+const { getUserCompletedTasks } = require(
+  path.join(process.cwd(), "./helpers/dbQueries"),
 );
 
-function showCompletedTasks(req, res) {
+async function showCompletedTasks(req, res) {
   if (!req.session.login) {
     return res.redirect("/error/");
   }
 
-  loadUserTasks(req.session.login.email, (err, data) => {
-    if (err) throw err;
-    return res.render("pages/completed", { completed: data.completed });
-  });
+  try {
+    const completed = await getUserCompletedTasks(req.session.login.userId);
+    return res.render("pages/completed", { completed });
+  } catch (err) {
+    console.error("Error loading completed tasks:", err);
+    return res.redirect("/error/");
+  }
 }
 
 module.exports = showCompletedTasks;

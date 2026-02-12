@@ -62,7 +62,9 @@ function loadUserTasks(email, callback) {
         return callback(parseErr);
       }
       const tasks = Array.isArray(salvaged.tasks) ? salvaged.tasks : [];
-      const completed = Array.isArray(salvaged.completed) ? salvaged.completed : [];
+      const completed = Array.isArray(salvaged.completed)
+        ? salvaged.completed
+        : [];
       const payload = { tasks, completed };
       fs.writeFile(
         dataFileName,
