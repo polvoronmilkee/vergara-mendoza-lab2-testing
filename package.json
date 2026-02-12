@@ -7,7 +7,9 @@
     "prestart": "npm install",
     "start": "node app",
     "dev": "nodemon app --ignore ./data-db",
-    "dev:debug": "DEBUG=*,-nodemon*,-send* npm run dev"
+    "dev:debug": "DEBUG=*,-nodemon*,-send* npm run dev",
+    "test": "jest --detectOpenHandles",
+    "test:watch": "jest --watch"
   },
   "keywords": [
     "session",
@@ -28,6 +30,8 @@
     "strftime": "^0.10.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.11",
+    "supertest": "^7.2.2"
   }
 }
