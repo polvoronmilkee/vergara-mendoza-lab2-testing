@@ -10,7 +10,11 @@ async function showTasks(req, res) {
 
   try {
     const tasks = await getUserTasks(req.session.login.userId);
-    return res.render("pages/tasks", { tasks });
+    const normalizedTasks = tasks.map((task) => ({
+      ...task,
+      ID: task.task_id,
+    }));
+    return res.render("pages/tasks", { tasks: normalizedTasks });
   } catch (err) {
     console.error("Error loading tasks:", err);
     return res.redirect("/error/");

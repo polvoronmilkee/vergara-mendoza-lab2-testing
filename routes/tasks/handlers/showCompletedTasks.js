@@ -10,7 +10,11 @@ async function showCompletedTasks(req, res) {
 
   try {
     const completed = await getUserCompletedTasks(req.session.login.userId);
-    return res.render("pages/completed", { completed });
+    const normalizedCompleted = completed.map((task) => ({
+      ...task,
+      ID: task.task_id,
+    }));
+    return res.render("pages/completed", { completed: normalizedCompleted });
   } catch (err) {
     console.error("Error loading completed tasks:", err);
     return res.redirect("/error/");
