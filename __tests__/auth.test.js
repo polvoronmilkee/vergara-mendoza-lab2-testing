@@ -150,7 +150,7 @@ describe("Authentication API Tests", () => {
     });
   });
 
-  // API END POINT 3: LOGOUT --------------------------------
+  // API END POINT 3: LOGOUT -------------------------------- 
 
   describe("GET /logout/", () => {
     let agent;
