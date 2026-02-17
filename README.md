@@ -1,43 +1,123 @@
 # SE 2240 Lab 2: API Testing with Jest and Supertest
 
 ## 👥 Pair
-* **Member 1:** Chistine Ryll Vergara
-* **Member 2:** Sophia Marielle C. Mendoza
+
+- **Member 1:** Chistine Ryll Vergara
+- **Member 2:** Sophia Marielle C. Mendoza
 
 ---
 
 ## 🛠️ Setup & Installation
 
-Before running the tests, ensure you have all dependencies installed.
+Before running the application or tests, ensure you have all dependencies and database configured.
 
-1.  **Clone the project** and navigate to the root directory.
+### Prerequisites
+
+- Node.js (v14 or higher)
+- MySQL installed and running
+- MySQL Workbench (optional, for easier database management)
+
+### Installation Steps
+
+1.  **Clone the project** and navigate to the root directory:
+
+    ```bash
+    cd vergara-mendoza-lab2-testing
+    ```
+
 2.  **Install dependencies**:
+
     ```bash
     npm install
     ```
-    *This will install `jest`, `supertest`, `express`,and other necessary libraries.*
-3.  **Environment Variables**: Ensure your `.env` file is set up with your database credentials. See .env.example for reference
+
+    _This will install `jest`, `supertest`, `express`, `mysql2`, and other necessary libraries._
+
+3.  **Set up the database**:
+    - Open MySQL Workbench or use the MySQL CLI
+    - Run the schema file to create the database and tables:
+      ```bash
+      mysql -u root -p < data-db/schema.sql
+      ```
+    - Or open `data-db/schema.sql` in MySQL Workbench and execute it
+
+4.  **Configure environment variables**:
+    - Copy `.env.example` to `.env`:
+      ```bash
+      copy .env.example .env
+      ```
+    - Update `.env` with your MySQL credentials:
+      ```
+      DB_HOST=localhost
+      DB_USER=root
+      DB_PASSWORD=your_mysql_password
+      DB_NAME=todo_app
+      ```
+
+---
+
+## 🚀 Running the Application
+
+To run the application in development mode:
+
+```bash
+npm run dev
+```
+
+This will start the app with nodemon (auto-restart on file changes) at `http://localhost:3000`
+
+To run in production mode:
+
+```bash
+npm start
+```
 
 ---
 
 ## 🧪 Running the Tests
 
-To execute the test suite, run the following command in your terminal:
+**⚠️ IMPORTANT:** Before running tests, ensure you have completed ALL installation steps above, especially:
+
+- MySQL database is running
+- Database schema is created (step 3)
+- `.env` file is configured with correct credentials (step 4)
+
+To execute the API test suite, run the following command in your terminal:
 
 ```bash
 npm test
+```
+
+This will run all test files in the `__tests__/` directory using Jest and Supertest.
+
+### Test Files
+
+- **`__tests__/auth.test.js`** - Authentication API tests (register, login, protected routes)
+
+### Test Coverage
+
+Each endpoint has:
+
+- ✅ **Happy path tests** - Verify expected behavior with valid inputs
+- ❌ **Sad path tests** - Verify error handling with invalid inputs, missing auth, etc.
+
+### Troubleshooting Tests
+
+- **Access denied errors**: Verify your `.env` file has correct MySQL credentials
+- **Connection refused**: Ensure MySQL service is running
+- **Tests hanging**: Check that database connections are properly closed
 
 ---
 
 Original README:
- 
+
 [![NodeJS](https://github.com/MarioTerron/logo-images/blob/master/logos/nodejs.png)](https://nodejs.org/)
 [![ExpressJS](https://github.com/MarioTerron/logo-images/blob/master/logos/expressjs.png)](http://expressjs.com///)
-[![PugJS](https://github.com/MarioTerron/logo-images/blob/master/logos/pug.png)](http://www.pugjs.org/) 
-[![ES6](https://github.com/MarioTerron/logo-images/blob/master/logos/es6.png)](http://www.ecma-international.org/ecma-262/6.0/) 
+[![PugJS](https://github.com/MarioTerron/logo-images/blob/master/logos/pug.png)](http://www.pugjs.org/)
+[![ES6](https://github.com/MarioTerron/logo-images/blob/master/logos/es6.png)](http://www.ecma-international.org/ecma-262/6.0/)
 [![npm](https://github.com/MarioTerron/logo-images/blob/master/logos/npm.png)](https://www.npmjs.com/)
 
-[![HTML5,CSS3 and JS](https://github.com/FransLopez/logo-images/blob/master/logos/html5-css3-js.png)](http://www.w3.org/) 
+[![HTML5,CSS3 and JS](https://github.com/FransLopez/logo-images/blob/master/logos/html5-css3-js.png)](http://www.w3.org/)
 [![Standard - JavaScript Style Guide](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)
 [![Standard - JavaScript Style Guide](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
@@ -62,28 +142,36 @@ Example: `http://localhost:3000/tasks`
 ### GET endpoints
 
 #### [GET] `/tasks`
+
 #### [GET] `/completed`
+
 #### [GET] `/login`
+
 #### [GET] `/registry`
+
 #### [GET] `/logout`
+
 #### [GET] `/error`
 
 ### POST endpoints
 
 #### [POST] `/tasks`
+
 #### [POST] `/login`
+
 #### [POST] `/registry`
 
 ### PUT endpoints
 
 #### [PUT] `/task/:id`
+
 #### [PUT] `/edit/:id`
 
 ### DELETE endpoints
 
 #### [DELETE] `/task/:id`
-#### [DELETE] `/completed/:id`
 
+#### [DELETE] `/completed/:id`
 
 ## NOTE
 
