@@ -57,7 +57,6 @@ describe("Authentication API Tests", () => {
     await removeUserByEmail(testEmail);
   });
 
-
   // API END POINT 1: REGISTRATION --------------------------------
 
   describe("POST /registry/", () => {
@@ -112,7 +111,6 @@ describe("Authentication API Tests", () => {
     });
   });
 
-
   // API END POINT 2: LOGIN --------------------------------
 
   describe("POST /login/", () => {
@@ -149,6 +147,41 @@ describe("Authentication API Tests", () => {
 
       expect(res.status).toBe(302);
       expect(res.headers.location).toBe("/error");
+    });
+  });
+
+  // API END POINT 3: LOGOUT --------------------------------
+
+  describe("GET /logout/", () => {
+    let agent;
+
+    beforeAll(async () => {
+      agent = request.agent(app);
+
+      // ensure user exists
+      const existing = await findUserByEmail(testEmail);
+      if (!existing) {
+        await createUser(testEmail, testPassword);
+      }
+
+      // login first
+      await agent.post("/login/").send({
+        email: testEmail,
+        password: testPassword,
+      });
+    });
+
+    test("happy path: should logout and redirect to /", async () => {
+      const res = await agent.get("/logout/");
+
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe("/");
+    });
+
+    test("sad path: should no longer access protected route after logout", async () => {
+      // try accessing protected route after logout
+      const res = await agent.get("/tasks/");
+      expect(res.status).toBe(302);
     });
   });
 });
