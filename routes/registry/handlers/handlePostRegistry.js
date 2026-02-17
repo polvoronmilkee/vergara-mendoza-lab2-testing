@@ -7,6 +7,16 @@ const { createUser, findUserByEmail } = require(
 async function handlePostRegistry(req, res) {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    console.log("Email or password missing");
+    return res.redirect("/registry/");
+  }
+
+  if (!email.includes("@")) {
+    console.log("Invalid email format");
+    return res.redirect("/registry/");
+  }
+
   try {
     // Check if user already exists
     const existingUser = await findUserByEmail(email);

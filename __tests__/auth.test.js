@@ -84,7 +84,7 @@ describe("Authentication API Tests", () => {
       expect(res.headers.location).toBe("/registry/");
     });
 
-    test("sad path: shoudl fail if email is missing and redirect to registry", async () => {
+    test("sad path: should fail if email is missing and redirect to registry", async () => {
       const res = await request(app)
         .post("/registry/")
         .send({ password: testPassword });
@@ -97,6 +97,15 @@ describe("Authentication API Tests", () => {
       const res = await request(app)
         .post("/registry/")
         .send({ email: testEmail });
+
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe("/registry/");
+    });
+
+    test("sad path: should fail if email is invalid and redirect to registry", async () => {
+      const res = await request(app)
+        .post("/registry/")
+        .send({ email: "invalid_email", password: testPassword });
 
       expect(res.status).toBe(302);
       expect(res.headers.location).toBe("/registry/");
