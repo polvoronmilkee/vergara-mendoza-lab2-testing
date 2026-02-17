@@ -1,3 +1,36 @@
+# SE 2240 Lab 2: API Testing with Jest and Supertest
+
+## 👥 Pair
+* **Member 1:** Chistine Ryll Vergara
+* **Member 2:** Sophia Marielle C. Mendoza
+
+---
+
+## 🛠️ Setup & Installation
+
+Before running the tests, ensure you have all dependencies installed.
+
+1.  **Clone the project** and navigate to the root directory.
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+    *This will install `jest`, `supertest`, `express`,and other necessary libraries.*
+3.  **Environment Variables**: Ensure your `.env` file is set up with your database credentials. See .env.example for reference
+
+---
+
+## 🧪 Running the Tests
+
+To execute the test suite, run the following command in your terminal:
+
+```bash
+npm test
+
+---
+
+Original README:
+ 
 [![NodeJS](https://github.com/MarioTerron/logo-images/blob/master/logos/nodejs.png)](https://nodejs.org/)
 [![ExpressJS](https://github.com/MarioTerron/logo-images/blob/master/logos/expressjs.png)](http://expressjs.com///)
 [![PugJS](https://github.com/MarioTerron/logo-images/blob/master/logos/pug.png)](http://www.pugjs.org/) 
