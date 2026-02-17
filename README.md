@@ -2,7 +2,7 @@
 
 ## 👥 Pair
 
-- **Member 1:** Chistine Ryll Vergara
+- **Member 1:** Chistine Ryll T. Vergara
 - **Member 2:** Sophia Marielle C. Mendoza
 
 ---
@@ -92,7 +92,8 @@ This will run all test files in the `__tests__/` directory using Jest and Supert
 
 ### Test Files
 
-- **`__tests__/auth.test.js`** - Authentication API tests (register, login, protected routes)
+- **`__tests__/auth.test.js`** - Authentication API tests (register, login, protected routes, logout)
+- **`__tests__/tasks.test.js`** - CRUD API tests (create, update, delete, mark task as complete) 
 
 ### Test Coverage
 
