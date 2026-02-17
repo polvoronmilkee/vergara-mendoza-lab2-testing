@@ -26,6 +26,11 @@ To execute the test suite, run the following command in your terminal:
 
 ```bash
 npm test
+```
+
+## SET UP DB 
+
+To set up the database, you can check SETUP.md and MYSQL_SETUP.md for more details.
 
 ---
 
